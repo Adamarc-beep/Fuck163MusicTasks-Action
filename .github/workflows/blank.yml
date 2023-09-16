@@ -35,7 +35,99 @@ jobs:
       - name: Export Config
         env:
           CONFIG: ${{ secrets.CONFIG }}
-        run: 
+        run: {
+  "DEBUG": false, // 是否开启 DEBUG, 也可以在命令行参数加 -d 以开启 DEBUG模式
+  "Users": [ // 用户配置
+    {
+      "Cookies": [ // 至少填入一个用户的 MUSIC_U, 支持多用户及多 Cookie
+        {
+          "Name": "MUSIC_U", // 不要修改此字段
+          "Value": "USER_1_MUSIC_U"
+        }
+      ]
+    },
+    {
+      "Cookies": [
+        {
+          "Name": "MUSIC_U",
+          "Value": "USER_2_MUSIC_U"
+        }
+      ]
+    }
+  ],
+  "MusicShareConfig": { // 分享音乐配置
+    "MySongID": 114514 // 填入任意一首音乐人名下的歌曲ID
+  },
+  "EventSendConfig": { // 发送动态配置
+    "LagConfig": { // 延时配置，若要完全关闭延时，请将 RandomLag 设为 false，并将 DefaultLag 设为 0
+      "RandomLag": true, // 是否开启随机延时
+      "LagBetweenSendAndDelete": true, // 是否开启发送动态与删除动态间的延时
+      "DefaultLag": 60, // 默认延时，若 RandomLag 为 true, 则忽略此参数
+      "LagMin": 30, // 随机延时最小值
+      "LagMax": 120 // 随机延时最大值
+    }
+  },
+  "CommentConfig": { // 评论配置
+    "RepliedComment": [ // 填入你想回复的评论信息, 此处的 Array 对应上面的用户配置
+      { // USER_1 的评论配置
+        "MusicID": 123456, // 待回复评论的歌曲ID，同时也是主创说的发布歌曲ID
+        "CommentID": 123456 // 待回复评论的评论ID
+      },
+      { // USER_2 的评论配置
+        "MusicID": 123456,
+        "CommentID": 123456
+      }
+    ],
+    "LagConfig": { // 评论延时设置, 配置项同上
+      "RandomLag": true,
+      "LagBetweenSendAndDelete": true,
+      "DefaultLag": 60,
+      "LagMin": 30,
+      "LagMax": 120
+    }
+  },
+  "SendMsgConfig": { // 回复私信配置, 此处的 Array 同样对应上面的用户配置
+    "UserID": [ // USER_1 的私信配置
+      [ // 可填入多个 userID, 程序将会在回复私信时随机选择
+        123456, // USER_1 回复私信的用户1号
+        233333 // USER_1 回复私信的用户2号
+      ],
+      [ // USER_2 的私信配置
+        123456
+      ]
+    ],
+    "LagConfig": { // 回复私信延迟配置, 配置项同上
+      "RandomLag": true,
+      "DefaultLag": 10,
+      "LagMin": 5,
+      "LagMax": 20
+    }
+  },
+    "SendMlogConfig": { // 发送 Mlog 配置
+    "PicFolder": "./pic", // Mlog 图片文件夹, 随机使用文件夹下的图片
+    "MusicIDs": [ // Mlog 的 bgm, 随机使用
+      1322404518,
+      1395512014,
+      1295601353
+    ]
+  },
+  "AutoGetVipGrowthpoint": false, // 是否自动领取会员任务成长值 (默认关闭)
+  "Content": [ // 发送动态、回复评论、回复私信的文本内容, 须至少填入两条, 程序将会随机选择
+    "YOUR_CUSTOM_TEXT_1",
+    "YOUR_CUSTOM_TEXT_2"
+  ],
+  "Cron": { // 内置 Cron 设置
+    "Enabled": false, // 是否启用内置 Cron
+    "Expression": "0 0 1,13 * * ?", // Cron 表达式
+    "EnableLag": false, // 是否启用 Cron 运行到执行自动任务间的随机延时
+    "LagConfig": { // 随机延时设置，设置项含义同上
+      "LagMin": 600,
+      "LagMax": 3600
+    }
+  },
+  "PushPlusToken": "", // PushPlus Token, 用于推送运行日志（随便填一个就好）
+  "ServerSendKey": "" // Server酱 SendKey
+}
           echo "$CONFIG" > config.json
 
       # Runs a set of commands using the runners shell
